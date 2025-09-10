@@ -1,0 +1,56 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    env_file:
+      - ./WalletApi/WalletApi/.env
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}  # From .env
+    #   MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}  # From .env
+    command: mongod --bind_ip_all --auth
+    networks:
+      - backend-network
+
+  authapi:
+    build:
+      context: ./AuthAPI/AuthAPI
+      dockerfile: Dockerfile
+    ports:
+      - "7001:80"
+    env_file:
+      - ./AuthAPI/AuthAPI/.env  # Reference .env here
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Authentication__BaseUrl=http://walletapi:80
+    depends_on:
+      - mongodb
+    networks:
+      - backend-network
+
+  walletapi:
+    build:
+      context: ./WalletApi/WalletApi
+      dockerfile: Dockerfile
+    env_file:
+      - ./WalletApi/WalletApi/.env
+    ports:
+      - "7002:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - mongodb
+      - authapi
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

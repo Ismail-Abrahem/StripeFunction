@@ -1,0 +1,43 @@
+# .dockerignore file for WalletApi project
+
+# Ignore version control directories
+.git/
+.gitignore
+
+# Ignore IDE and editor files
+.vs/
+*.suo
+*.user
+*.vsidx
+
+# Ignore build output directories
+bin/
+obj/
+
+# Ignore configuration and environment files
+*.env
+*.env.*
+*.local.*
+
+# Ignore temporary and log files
+*.tmp
+*.log
+
+# Ignore documentation files
+*.md
+README*
+
+# Ignore Docker-related files
+Dockerfile*
+docker-compose*
+
+# Ignore other unnecessary files
+*.db
+*.v2
+
+# Allow necessary files
+!WalletApi/
+!WalletApi/**/*.cs
+!WalletApi/**/*.json
+
+# End of .dockerignore file
